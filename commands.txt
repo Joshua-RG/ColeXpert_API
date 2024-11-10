@@ -1,0 +1,5 @@
+# ingresar al docker 
+
+docker exec -it ColeXpertDB mysql -uadmin -padmin
+
+SHOW DATABASES;
