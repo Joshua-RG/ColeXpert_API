@@ -3,3 +3,6 @@
 docker exec -it ColeXpertDB mysql -uadmin -padmin
 
 SHOW DATABASES;
+
+# Ejecutar el proyecto 
+uvicorn app:app --reload
