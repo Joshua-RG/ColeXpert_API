@@ -1,0 +1,5 @@
+# Ignorar todas las carpetas __pycache__
+__pycache__/
+
+# Ignorar la carpeta env_api
+env_api/
