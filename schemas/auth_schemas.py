@@ -8,3 +8,4 @@ class Token(BaseModel):
     user_name: Optional[str] = None
     user_email: Optional[str] = None
     user_role: Optional[str] = None
+    user_img: Optional[str] = None

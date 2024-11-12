@@ -53,7 +53,7 @@ def login_user(user: UserLogin) -> Token:
     
     access_token = create_access_token(data={"sub": user_db.email})
 
-    return Token(access_token=access_token, token_type="bearer", user_id=user_db.id, user_name=user_db.name, user_email=user_db.email, user_role=user_db.role)
+    return Token(access_token=access_token, token_type="bearer", user_id=user_db.id, user_name=user_db.name, user_email=user_db.email, user_role=user_db.role, user_img=user_db.img)
         
 def read_access_token(token: Token) -> UserResponse:
     try:
