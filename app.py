@@ -1,5 +1,6 @@
 # modulos externos
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # modulos internos
 from routes import auth_routes
@@ -11,6 +12,14 @@ from routes import payment_routes
 from routes import bid_routes
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite cualquier origen
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos HTTP
+    allow_headers=["*"],  # Permite todos los encabezados
+)
 
 app.include_router(auth_routes.router, prefix="/auth")
 app.include_router(user_routes.router, prefix="/admin/users")

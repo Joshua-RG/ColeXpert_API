@@ -12,6 +12,6 @@ users = Table('users', meta,
               Column("adress", String(255), nullable=True),
               Column("phone", String(15), nullable=True),
               Column("created_at", DateTime(timezone=True), server_default=func.now()),
-              Column("img", Text, nullable=True))
+              Column("img", Text(length=4294967295), nullable=True))
 
 meta.create_all(engine)

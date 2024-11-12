@@ -8,7 +8,7 @@ class UserRequest(BaseModel):
     password: Annotated[str, constr(min_length=5, max_length=255)]
     adress: Optional[Annotated[str, constr(max_length=255)]] = None
     phone: Optional[Annotated[str, constr(max_length=15)]] = None
-    img: Optional[Annotated[str, constr(max_length=255)]] = None
+    img: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -25,7 +25,7 @@ class UserUpdate(BaseModel):
     password: Optional[Annotated[str, constr(min_length=5, max_length=255)]] = None
     adress: Optional[Annotated[str, constr(max_length=255)]] = None
     phone: Optional[Annotated[str, constr(max_length=15)]] = None
-    img: Optional[Annotated[str, constr(max_length=255)]] = None
+    img: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr 
