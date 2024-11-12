@@ -20,7 +20,7 @@ from schemas.auth_schemas import Token
 
 SECRET_KEY = "6484e5ac05dedf7949f015c1bb9478bf8f2087dc3bf3b54a9c696b8a3c166be87a1582096e7a93431ee7240e8e2a2d3e971c775da7bf9885cd9ea77a46b8fbba"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 120
+ACCESS_TOKEN_EXPIRE_MINUTES = 420
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -32,7 +32,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -76,7 +76,7 @@ def read_access_token(token: Token) -> UserResponse:
         adress=user_db.adress,
         role=user_db.role,
         phone=user_db.phone,
-        img_path=user_db.img_path
+        img=user_db.img
     )
 
 def create_user(user: UserRequest) -> UserResponse:
@@ -89,7 +89,7 @@ def create_user(user: UserRequest) -> UserResponse:
         adress = user.adress,
         phone = user.phone,
         created_at = datetime.now(),
-        img_path = user.img_path
+        img = user.img
     )
 
     try:
@@ -106,7 +106,7 @@ def create_user(user: UserRequest) -> UserResponse:
             adress=user.adress,
             role=user_db.role,
             phone=user.phone,
-            img_path=user.img_path
+            img=user.img
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Could not create user {e}')

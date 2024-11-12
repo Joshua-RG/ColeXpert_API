@@ -42,7 +42,7 @@ def get_all_items(token: Token) -> list[ItemResponse]:
                 id = item["id"],
                 name = item["name"],
                 description = item["description"],
-                img_path = item["img_path"],
+                img = item["img"],
                 init_price = item["init_price"],
                 final_price = item["final_price"],
                 category_name = category.name,
@@ -69,7 +69,7 @@ def get_item_by_id(id: int, token: Token) -> ItemResponse:
             id = result["id"],
             name = result["name"],
             description = result["description"],
-            img_path = result["img_path"],
+            img = result["img"],
             init_price = result["init_price"],
             final_price = result["final_price"],
             category_name = get_category_by_id(result["category_id"], token).name,
@@ -80,6 +80,16 @@ def get_item_by_id(id: int, token: Token) -> ItemResponse:
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found")
 
+def get_item_id_by_name(name: str) -> int:
+    
+        query = select(items).where(items.c.name == name)
+    
+        try:
+            result = conn.execute(query).mappings().fetchone()
+            return result["id"]
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found")
+
 def create_item(item: ItemRequest, token: Token) -> ItemResponse:
 
     role = get_role(token)
@@ -89,7 +99,7 @@ def create_item(item: ItemRequest, token: Token) -> ItemResponse:
     query = items.insert().values(
         name = item.name,
         description = item.description,
-        img_path = item.img_path,
+        img = item.img,
         created_at = datetime.now(),
         init_price = item.init_price,
         final_price = item.init_price,
@@ -108,7 +118,7 @@ def create_item(item: ItemRequest, token: Token) -> ItemResponse:
             id = item_db.id,
             name = item.name,
             description = item.description,
-            img_path = item.img_path,
+            img = item.img,
             init_price = item.init_price,
             final_price = item_db.final_price,
             category_name = get_category_by_id(item.category_id, token).name,
@@ -132,7 +142,7 @@ def update_item(id: int, item: ItemUpdate, token: Token) -> ItemResponse:
     item_updated = {
         "name": item.name if item.name else item_db["name"],
         "description": item.description if item.description else item_db["description"],
-        "img_path": item.img_path if item.img_path else item_db["img_path"],
+        "img": item.img if item.img else item_db["img"],
         "final_price": item.final_price if item.final_price else item_db["final_price"],
         "category_id": item.category_id if item.category_id else item_db["category_id"],
         "user_id": item.user_id if item.user_id else item_db["user_id"]

@@ -3,6 +3,8 @@ from fastapi import HTTPException, status
 
 from sqlalchemy import select
 
+from datetime import datetime
+
 # modulos internos
 from config.db import conn
 
@@ -80,11 +82,13 @@ def create_payment(payment: PaymentRequest, token: Token) -> PaymentResponse:
     if not role:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized user")
     
+    item = get_item_by_id(payment.item_id, token)
+    
     query = payments.insert().values(
-        amount = payment.amount,
-        method = payment.method,
-        date = payment.date,
-        state = payment.state,
+        amount = item.final_price,
+        method = "PAYPAL",
+        date = datetime.now(),
+        state = "PENDING",
         item_id = payment.item_id,
         user_id = payment.user_id
     )
@@ -93,18 +97,13 @@ def create_payment(payment: PaymentRequest, token: Token) -> PaymentResponse:
         conn.execute(query)
         conn.commit()
 
-        # Query para seleccionar el pago por cantidad y fecha
-        query = select(payments).where(payments.c.amount == payment.amount, payments.c.date == payment.date)
-        payment_db = conn.execute(query).fetchone()
-
         payment_response = PaymentResponse(
-            id = payment_db.id,
-            amount = payment_db.amount,
-            method = payment_db.method,
-            date = payment_db.date,
-            state = payment_db.state,
-            item_name = get_item_by_id(payment_db.item_id, token).name,
-            user_name = get_user_by_id(payment_db.user_id).name
+            amount = item.final_price,
+            method = "PAYPAL",
+            date = datetime.now(),
+            state = "PENDING",
+            item_name = get_item_by_id(payment.item_id, token).name,
+            user_name = get_user_by_id(payment.user_id).name
         )
         return payment_response
 
@@ -114,16 +113,20 @@ def create_payment(payment: PaymentRequest, token: Token) -> PaymentResponse:
 def update_payment(id: int, payment: PaymentUpdate, token: Token) -> PaymentResponse:
 
     role = get_role(token)
-    if not role:
+    if not role or role != "ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized user")
     
     payment_db = conn.execute(select(payments).where(payments.c.id == id)).mappings().fetchone()
     if not payment_db:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Payment not found")
     
+    amount = None
+    if payment.item_id:
+        amount = get_item_by_id(payment.item_id, token).final_price
+    
+    
     payment_updated = {
-        "amount": payment.amount if payment.amount else payment_db.amount,
-        "method": payment.method if payment.method else payment_db.method,
+        "amount": payment.amount if amount else payment_db.amount,
         "date": payment.date if payment.date else payment_db.date,
         "state": payment.state if payment.state else payment_db.state,
         "item_id": payment.item_id if payment.item_id else payment_db.item_id,
@@ -142,7 +145,7 @@ def update_payment(id: int, payment: PaymentUpdate, token: Token) -> PaymentResp
 def delete_payment_by_id(id: int, token: Token) -> None:
 
     role = get_role(token)
-    if not role:
+    if not role or role != "ADMIN":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized user")
     
     query = payments.delete().where(payments.c.id == id)

@@ -1,5 +1,5 @@
 from sqlalchemy import DateTime, Table, Column
-from sqlalchemy.sql.sqltypes import Integer, String
+from sqlalchemy.sql.sqltypes import Integer, String, Text
 from sqlalchemy.sql import func
 from config.db import meta, engine
 
@@ -12,6 +12,6 @@ users = Table('users', meta,
               Column("adress", String(255), nullable=True),
               Column("phone", String(15), nullable=True),
               Column("created_at", DateTime(timezone=True), server_default=func.now()),
-              Column("img_path", String(255), nullable=True))
+              Column("img", Text, nullable=True))
 
 meta.create_all(engine)

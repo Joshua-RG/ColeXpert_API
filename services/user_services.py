@@ -50,7 +50,7 @@ def get_all_users(token: Token) -> list[UserResponse]:
                 adress = user["adress"],
                 role = user["role"],
                 phone = user["phone"],
-                img_path = user["img_path"],
+                img = user["img"],
             ) for user in result
         ]
         return users_db
@@ -72,7 +72,7 @@ def create_admin(user: UserRequest, token: Token) -> UserResponse:
         adress = user.adress,
         phone = user.phone,
         created_at = datetime.now(),
-        img_path = user.img_path
+        img = user.img
     )
 
     try:
@@ -89,7 +89,7 @@ def create_admin(user: UserRequest, token: Token) -> UserResponse:
             adress=user.adress,
             role="ADMIN",
             phone=user.phone,
-            img_path=user.img_path
+            img=user.img
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"User not created {str(e)}")
@@ -107,7 +107,7 @@ def get_user_by_id(id: int) -> UserResponse:
             adress = result["adress"],
             role = result["role"],
             phone = result["phone"],
-            img_path = result["img_path"]
+            img = result["img"]
         )
 
         return user_db
@@ -130,7 +130,7 @@ def update_user(id: int, user: UserUpdate, token: Token) -> UserResponse:
         "password": user_db["password"] if user.password is None else hash_password(user.password),
         "adress": user_db["adress"] if user.adress is None else user.adress,
         "phone": user_db["phone"] if user.phone is None else user.phone,
-        "img_path": user_db["img_path"] if user.img_path is None else user.img_path
+        "img": user_db["img"] if user.img is None else user.img
     }
 
     query = users.update().where(users.c.id == id).values(user_updated)

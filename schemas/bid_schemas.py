@@ -4,12 +4,10 @@ from datetime import datetime
 
 class BidRequest(BaseModel):
     amount: float
-    date: datetime
     auction_id: int
-    user_id: int
 
 class BidResponse(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     amount: float
     date: datetime
     auction_name: str
