@@ -53,7 +53,7 @@ def get_all_items(token: Token) -> list[ItemResponse]:
         return items_db
     
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Items not found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Items not found{e}")
     
 def get_item_by_id(id: int, token: Token) -> ItemResponse:
 
@@ -78,7 +78,7 @@ def get_item_by_id(id: int, token: Token) -> ItemResponse:
         return item_db
     
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found{e}")
 
 def get_item_id_by_name(name: str) -> int:
     
@@ -88,7 +88,7 @@ def get_item_id_by_name(name: str) -> int:
             result = conn.execute(query).mappings().fetchone()
             return result["id"]
         except Exception as e:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Item not found{e}")
 
 def create_item(item: ItemRequest, token: Token) -> ItemResponse:
 

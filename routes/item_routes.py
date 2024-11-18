@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from schemas.item_schemas import ItemRequest, ItemUpdate
 from schemas.auth_schemas import Token
 
-from services.item_services import get_all_items, create_item, get_item_by_id, update_item, delete_item_by_id
+from services.item_services import get_all_items, create_item, get_item_by_id, update_item, delete_item_by_id, get_item_id_by_name
 
 router = APIRouter()
 
@@ -19,6 +19,10 @@ def get_items(token: Token = Depends(oauth2_scheme)):
 @router.get("/{id}")
 def get_item(id: int, token: Token = Depends(oauth2_scheme)):
     return get_item_by_id(id, token)
+
+@router.get("/name/{name}")
+def get_itemId(name: str):
+    return get_item_id_by_name(name)
 
 @router.post("/")
 def post_item(item: ItemRequest, token: Token = Depends(oauth2_scheme)):

@@ -22,7 +22,7 @@ def get_role(token: Token) -> str:
 def get_all_categories(token: Token) -> list[CategoryResponse]:
 
     role = get_role(token)
-    if not role or role != "ADMIN":
+    if not role:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized user")
     
     query = select(categories)
