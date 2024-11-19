@@ -1,8 +1,10 @@
 # modulos externos
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
 # modulos internos
+from config.db import get_db
 from routes import auth_routes
 from routes import user_routes
 from routes import category_routes
@@ -33,3 +35,10 @@ app.include_router(bid_routes.router, prefix="/bids")
 def read_root():
     return {"message": "Bienvenido a la API de subastas"}
 
+@app.get("/healthcheck")
+def healthcheck(db: Session = Depends(get_db)):
+    try:
+        db.execute("SELECT 1")
+        return {"status": "healthy"}
+    except Exception:
+        return {"status": "unhealthy"}
